@@ -1,0 +1,15 @@
+<!--pages/kuaidi/company/index.wxml-->
+<view class="container">
+  <view class="top">
+    <text>☆</text><text>常用快递</text>
+  </view>
+  <block wx:for="{{companies}}">
+     <view class="line" data-name="{{item.name}}" data-code="{{item.code}}" data-url="{{item.url}}" catchtap="onCompanyTap">
+      <image src="{{item.url}}"></image>
+      <view class="info">
+        <text>{{item.name}}</text>
+        <text data-num="{{item.hotline}}" catchtap="onCallTap">{{item.hotline}}</text>
+      </view>
+    </view> 
+  </block>
+</view>

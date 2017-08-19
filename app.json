@@ -1,0 +1,14 @@
+{
+  "pages":[
+    "pages/index/index",
+    "pages/kuaidi/kuaidi",
+    "pages/kuaidi/company/index",
+    "pages/kuaidi/result/index"
+    
+  ],
+  "window":{
+    "backgroundTextStyle":"light",
+    "navigationBarBackgroundColor": "#1296db",
+    "navigationBarTextStyle":"white"
+  }
+}

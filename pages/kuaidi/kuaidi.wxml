@@ -1,0 +1,15 @@
+<!--pages/kuaidi/kuaidi.wxml-->
+<view class="container">
+  <view class="oddNum line">
+    <image src="/images/kuaidi/bar.png"></image>
+    <input  placeholder="请输入快递单号"  bindconfirm="onOddNumConfirm" bindblur="onOddNumConfirm" value="{{oddNum}}"/>
+    <image src="/images/kuaidi/scan.png" catchtap="onScanTap"></image>
+  </view>
+  <view class="line" catchtap="onCompanyTap">
+    <image src="/images/kuaidi/company.png"></image>
+    <view class="company">{{company}}</view>
+    <image src="/images/kuaidi/right.png"></image>
+  </view>
+  <view class="warn {{isWarn}}">查询失败请检查单号和所属公司</view>
+  <button catchtap="onCheckTap" class="{{className}}">查快递</button>
+</view>

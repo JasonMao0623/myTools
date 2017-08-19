@@ -1,0 +1,73 @@
+/* pages/kuaidi/result/index.wxss */
+@import "../../../utils/style/normalize.wxss";
+@import "../../../utils/style/theme.wxss";
+
+.container {
+  font-size: 50rpx;
+  justify-content: flex-start;
+}
+
+.top {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: white;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  margin-top: 20rpx;
+}
+
+.top text {
+  height: 100rpx;
+  line-height: 100rpx;
+  margin-left: 40rpx;
+  font-size: 40rpx;
+  color: black;
+}
+
+.top text:last-child {
+  position: absolute;
+  right: 30rpx;
+  color: #1296db;
+}
+
+image {
+  height: 90rpx;
+  width: 90rpx;
+  border-radius: 90rpx;
+  margin-left: 20rpx;
+}
+
+.info {
+  width: 100%;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: white;
+  display: flex;
+  flex-direction: row;
+  margin-top: 10rpx;
+  color: orange;
+  padding-left: 55rpx;
+}
+.line{
+  width: 100%;
+  line-height: 50rpx;
+  background: white;
+  display: flex;
+  flex-direction: row;
+  border-top: solid 1rpx #bfbfbf;
+}
+.line:last-child{
+  border-bottom: solid 1rpx #bfbfbf;
+}
+.left{
+  width: 30%;
+  text-align: center;
+  border-right: solid 1rpx #bfbfbf;
+}
+.right{
+  width: 70%;
+  text-align: center;
+  padding: 0 20rpx;
+}

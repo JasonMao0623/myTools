@@ -1,0 +1,21 @@
+<!--pages/kuaidi/result/index.wxml-->
+<view class="container">
+  <view class="top">
+    <image src="{{details.url}}"></image>
+    <text>{{details.name}}</text>
+    <text>{{details.oddNum}}</text>
+  </view>
+  <view class="info">
+    <text> 快递信息</text>
+  </view>
+  <block wx:for="{{details.detail}}">
+    <view class="line">
+      <view class="left">
+        <text>{{item.time}}</text>
+      </view>
+      <view class="right">
+        <text>{{item.context}}</text>
+      </view>
+    </view>
+  </block>
+</view>
