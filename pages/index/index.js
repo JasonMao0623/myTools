@@ -9,7 +9,7 @@ Page({
   //进入工具箱tap事件
   onTap:function(){
     //console.log('123');
-    wx.redirectTo({
+    wx.switchTab({
       url: '/pages/kuaidi/kuaidi',
     })
   }

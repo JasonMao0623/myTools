@@ -1,14 +1,32 @@
 {
   "pages":[
     "pages/index/index",
+    "pages/tingyun/tingyun",
     "pages/kuaidi/kuaidi",
     "pages/kuaidi/company/index",
     "pages/kuaidi/result/index"
-    
   ],
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#1296db",
     "navigationBarTextStyle":"white"
+  },
+  "tabBar": {
+    "selectedColor": "#1296db",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/kuaidi/kuaidi",
+        "text": "查快递",
+        "iconPath": "images/tingyun/kuaidi0.png",
+        "selectedIconPath": "images/tingyun/kuaidi1.png"
+      },
+      {
+        "pagePath": "pages/tingyun/tingyun",
+        "text": "听云",
+        "iconPath": "images/tingyun/data0.png",
+        "selectedIconPath": "images/tingyun/data1.png"
+      }
+    ]
   }
 }
