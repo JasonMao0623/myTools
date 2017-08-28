@@ -25,14 +25,6 @@ Page({
         'oddNum': oddNum
       })
     }
-    //获取url参数
-    if(options.name){
-      this.setData({
-        'company': options.name,
-        'code':options.code,
-        'url':options.url
-      })
-    };
     //如果已经设置了单号和公司改变按钮的颜色
     if(this.data.code&&this.data.oddNum){
       //console.log(1);
@@ -129,6 +121,15 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
+    //获取缓存参数
+    var storage = wx.getStorageSync("company");
+    if (storage) {
+      this.setData({
+        'company': storage.name,
+        'code': storage.code,
+        'url': storage.url
+      })
+    };
   },
 
   /**

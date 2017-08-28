@@ -83,9 +83,6 @@ button{
 .his-line:last-child{
   border-bottom: 1px solid;
 }
-.his-line:first-child view:last-child{
-  padding-top: 35rpx;
-}
 .his-line view:first-child{
   height: 100rpx;
   line-height: 100rpx;
@@ -100,4 +97,8 @@ button{
   line-height: 35rpx;
   vertical-align: center;
   border-left: solid 1rpx;
+}
+.his-line:first-child view:last-child{
+   padding-top: 35rpx;
+   height: 65rpx;
 }

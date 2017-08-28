@@ -35,9 +35,18 @@ Page({
     var code = e.currentTarget.dataset.code;
     var name = e.currentTarget.dataset.name;
     var url = e.currentTarget.dataset.url;
-    wx.redirectTo({
-      url: '/pages/kuaidi/kuaidi?name='+name+'&code='+code+'&url='+url,
+    var data={
+      code:code,
+      name:name,
+      url:url
+    }
+    wx.setStorageSync("company", data);
+    wx.switchTab({
+      url: '/pages/kuaidi/kuaidi',
     })
+    // wx.redirectTo({
+    //   url: '/pages/kuaidi/kuaidi?name='+name+'&code='+code+'&url='+url,
+    // })
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
