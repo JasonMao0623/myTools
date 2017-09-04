@@ -1,6 +1,8 @@
 <view class="container">
   <image src="/images/tingyun/ty-logo.png"></image>
   <image src="/images/tingyun/history.png" class="history" catchtap="onHisTap"></image>
+  <image src="/images/tingyun/help.png" class="help" catchtap='onHelpTap'>
+  </image>
   <image src="/images/tingyun/off.png" class="off {{isHisExist}}" catchtap="onOffTap"></image>
   <view class="check-container {{isCheckExist}}">
     <view class="input-content">
@@ -11,12 +13,12 @@
       </view>
       <view class="line">
         <text>授权码</text>
-        <input placeholder="请输入授权码" bindblur="onAuthKeyConfirm" confirm-type='next' placeholder-class="place"/>
+        <input placeholder="请输入授权码" bindblur="onAuthKeyConfirm" confirm-type='next' placeholder-class="place" />
         <text>*</text>
       </view>
       <view class="line">
         <text>应用ID</text>
-        <input placeholder="请输入应用ID" bindblur="onAppIdConfirm" confirm-type='next' placeholder-class="place"/>
+        <input placeholder="请输入应用ID" bindblur="onAppIdConfirm" confirm-type='next' placeholder-class="place" />
         <text>*</text>
       </view>
       <view class="line">
@@ -30,7 +32,7 @@
       </view>
       <view class="line">
         <text>时间段</text>
-        <input placeholder="请输入时间段(分钟)" bindblur="onPeriodConfirm" confirm-type='done' placeholder-class="place"/>
+        <input placeholder="请输入时间段(分钟)" bindblur="onPeriodConfirm" confirm-type='done' placeholder-class="place" />
       </view>
       <view class="line">
         <text>截止天</text>
@@ -47,7 +49,7 @@
     </view>
     <button catchtap="onButtonTap" class="{{className}}">立即生成</button>
   </view>
-  <view class="history-container {{isHisExist}}">
+   <view class="history-container {{isHisExist}}">
     <view class="his-line">
       <view>事务名称</view>
       <view>EXCEL下载地址</view>
@@ -58,5 +60,5 @@
         <view><text selectable="true">{{item.url}}</text></view>
       </view>
     </block>
-  </view>
+  </view> 
 </view>

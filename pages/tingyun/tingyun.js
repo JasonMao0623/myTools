@@ -1,16 +1,16 @@
 // pages/tingyun/tingyun.js
 var tyConfig = require("../../utils/config/tingyun.js");
 var configData = tyConfig.tyConfig;
-var httpProperties={};
+var httpProperties = {};
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
-    charts:[
+    charts: [
       {
-        id:"application-webaction-topn",
+        id: "application-webaction-topn",
         name: '最耗时WEB应用过程'
       },
       {
@@ -21,25 +21,21 @@ Page({
         id: "application-database-topn",
         name: '最耗时SQL操作'
       },
-      {
-        id: "application-errors",
-        name: '应用错误率'
-      }
     ],
-    index:0,
-    isCheckExist:"display",
-    isHisExist:"nodisplay"
+    index: 0,
+    isCheckExist: "display",
+    isHisExist: "nodisplay"
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    httpProperties.chartId ="application-webaction-topn";
+    httpProperties.chartId = "application-webaction-topn";
     this.getTime();
   },
   //获取本地时间
-  getTime:function(){
+  getTime: function () {
     //获取本地时间
     var date = new Date();
     var seperator1 = "-";
@@ -64,55 +60,55 @@ Page({
     })
   },
   //时间处理事件,个位数前面加0
-  processTime:function(value){
-    if (value >= 0 && value <= 9){
-      return "0"+value;
-    }else{
+  processTime: function (value) {
+    if (value >= 0 && value <= 9) {
+      return "0" + value;
+    } else {
       return value;
     }
   },
   //日期选择绑定事件
-  bindDateChange:function(e){
+  bindDateChange: function (e) {
     //console.log(e);
-    var day=e.detail.value;
+    var day = e.detail.value;
     this.setData({
-      date:day
+      date: day
     })
   },
   //时间选择绑定事件
   bindTimeChange: function (e) {
     //console.log(e);
-    var time = e.detail.value+":"+"00";
+    var time = e.detail.value + ":" + "00";
     this.setData({
       time: time
     })
   },
   //用户id输入事件
-  onUserIdConfirm:function(e){
-    var value=e.detail.value;
+  onUserIdConfirm: function (e) {
+    var value = e.detail.value;
     httpProperties.accountId = value;
     this.propertyListen();
     //console.log(httpProperties);
   },
   //授权码输入事件
-  onAuthKeyConfirm:function(e){
-    var value=e.detail.value;
+  onAuthKeyConfirm: function (e) {
+    var value = e.detail.value;
     httpProperties.authKeyId = value;
     this.propertyListen();
     //console.log(httpProperties);
   },
   //应用id输入事件
-  onAppIdConfirm:function(e){
-    var value=e.detail.value;
+  onAppIdConfirm: function (e) {
+    var value = e.detail.value;
     httpProperties.appId = value;
     this.propertyListen();
-     //console.log(httpProperties);
+    //console.log(httpProperties);
   },
   //图表ID输入事件
-  bindChartChange:function(e){
-    var value=e.detail.value;
+  bindChartChange: function (e) {
+    var value = e.detail.value;
     this.setData({
-      index:value
+      index: value
     })
     httpProperties.chartId = this.data.charts[value].id;
     this.propertyListen();
@@ -126,7 +122,7 @@ Page({
     //console.log(httpProperties);
   },
   //全局属性监听事件
-  propertyListen:function(){
+  propertyListen: function () {
     if (httpProperties.accountId && httpProperties.authKeyId && httpProperties.appId && httpProperties.chartId) {
       this.setData({
         className: "blue"
@@ -138,12 +134,12 @@ Page({
     }
   },
   //立即生成按钮点击事件
-  onButtonTap:function(e){
-    var className=this.data.className;
-    if(className=="blue"){
+  onButtonTap: function (e) {
+    var className = this.data.className;
+    if (className == "blue") {
       this.processUrl();
       //发起网络请求
-    }else{
+    } else {
       wx.showModal({
         title: '提醒',
         content: '带*的是必填项哦',
@@ -151,33 +147,33 @@ Page({
     }
   },
   //url处理函数
-  processUrl:function(){
+  processUrl: function () {
     var url = 'https://api.tingyun.com/server/latest/accounts/';
-    url = url + httpProperties.accountId + "/application/" + httpProperties.appId +"/charts/"+httpProperties.chartId+".json";
+    url = url + httpProperties.accountId + "/application/" + httpProperties.appId + "/charts/" + httpProperties.chartId + ".json";
     this.httpFunction(url);
   },
   //http请求函数
-  httpFunction:function(url){
-    var property=wx.getStorageSync("property");
-    var that=this;
+  httpFunction: function (url) {
+    var property = wx.getStorageSync("property");
+    var that = this;
     var date = this.data.date + " " + this.data.time;
     var period = httpProperties.period;
-    if (!httpProperties.period){
-      period=0;
+    if (!httpProperties.period) {
+      period = 0;
     }
     httpProperties.date = date;
-    httpProperties.period=period;
+    httpProperties.period = period;
     //由于对象比较是根据该对象所占的内存情况比较的所及相对复杂
     //该方法利用将对象转换成字符串的方式进行比较
-    var str1=JSON.stringify(property);
-    var str2=JSON.stringify(httpProperties);
+    var str1 = JSON.stringify(property);
+    var str2 = JSON.stringify(httpProperties);
     //判断接口是否调用，避免接口滥用 
-    if(str1==str2){
+    if (str1 == str2) {
       wx.showModal({
         title: '提醒',
         content: '该数据已生成，请到历史列表查看',
       })
-    }else{
+    } else {
       wx.request({
         url: url,
         data: {
@@ -194,11 +190,8 @@ Page({
           if (res.statusCode == 200) {
             //调用数据处理函数
             that.processData(res);
-            wx.showLoading({
-              title: '加载中',
-            })
             wx.setStorageSync("property", httpProperties);
-          } else {httpProperties
+          } else {
             wx.showModal({
               title: '提醒',
               content: '请正确输入查询信息',
@@ -212,99 +205,146 @@ Page({
     }
   },
   //数据处理函数
-  processData:function(res){
+  processData: function (res) {
     //console.log(res);
-    var head=res.data.chart.dataset[0].head;
+    var head = res.data.chart.dataset[0].head;
     var data = res.data.chart.dataset[0].data[0];
     var cateGory = head.categories[0].name;
     var serieses = head.serieses;
-    var affairArry=[];
-    var avgTimeArray=[]
+    var affairArry = [];
     //获取事务名称函数
-    for (var i = 0; i < serieses.length;i++){
-      var seriese=serieses[i].name;
+    for (var i = 0; i < serieses.length; i++) {
+      var seriese = serieses[i].name;
       affairArry.push(seriese)
-    }
-    //计算平均值函数
-    for (var i = 0; i < data.length; i++) {
-      var dataItem=data[i];
-      var timeSum=0;
-      var avgTime=0;
-      //console.log(dataItem);
-      for(var x=0;x<dataItem.length;x++){
-        var timeArray=dataItem[x];
-        //数组判空
-        if(!timeArray[2]){
-            timeArray[2]=0;
-        }
-        var time=timeArray[2];
-        timeSum=timeSum+time;
-        avgTime=timeSum/dataItem.length;
-        avgTime=avgTime.toFixed(3);
+    };
+    //调用计算平均值函数
+    var avgTimeArray = [];
+    var chartId = httpProperties.chartId;
+    console.log(data);
+    if (data.length == 0) {
+      wx.showModal({
+        title: '注意',
+        content: '数据为空，时间段再选长点呗',
+      })
+    } else {
+      wx.showLoading({
+        title: '加载中',
+      })
+      switch (chartId) {
+        case "application-webaction-topn":
+          avgTimeArray = this.avgSumProcess(data, 2);
+          break;
+        case "application-external-topn":
+          avgTimeArray = this.avgSumProcess(data, 1);
+          break;
+        case "application-database-topn":
+          avgTimeArray = this.avgSumProcess(data, 1);
+          break;
       }
-      avgTimeArray.push(avgTime);
     }
-    this.processArray(cateGory,affairArry,avgTimeArray);
+    //console.log(avgTimeArray);
+    this.processArray(cateGory, affairArry, avgTimeArray);
+  },
+  //计算平均值函数,并返回平均值数组
+  avgSumProcess: function (data, num) {
+    var avgTimeArray = [];
+    console.log(data);
+    for (var i = 0; i < data.length; i++) {
+      var dataItem = data[i];
+      var timeSum = 0;
+      var avgTime = 0;
+      //console.log(dataItem);
+      for (var x = 0; x < dataItem.length; x++) {
+        var timeArray = dataItem[x];
+        //数组判空
+        if (!timeArray[num]) {
+          timeArray[num] = 0;
+        }
+        var time = timeArray[num];
+        timeSum = timeSum + time;
+        avgTime = timeSum / dataItem.length;
+        avgTime = avgTime.toFixed(3).toString() + "秒";
+        avgTimeArray.push(avgTime);
+      }
+      return avgTimeArray;
+    };
   },
   //将处理的数据在处理
-  processArray:function(cateGory,name,data){
-    var rows=[];
-    var title = ["来源", "对应网址/接口/错误", "类型","响应时间/错误率"];
-    for(var index in name){
-      var row=[];
+  processArray: function (cateGory, name, data) {
+    var rows = [];
+    var title = ["来源", "对应网址/接口/错误", "类型", "响应时间/错误率"];
+    for (var index in name) {
+      var row = [];
       row.push(cateGory);
       row.push(name[index]);
       row.push("响应慢");
       row.push(data[index]);
       rows.push(row);
     };
-    //console.log(rows);
-    this.excelHttp(title,rows,cateGory);
+    console.log("rows");
+    console.log(rows);
+    this.excelHttp(title, rows, cateGory);
   },
-  excelHttp:function(title,rows,cateGory){
-    var config=configData[0];
-    var url=config.url;
+  //excel表格生成函数
+  excelHttp: function (title, rows, cateGory) {
+    var config = configData[0];
+    var url = config.url;
     var appid = config.appid;
     var sign = config.sign;
-    var urlArray=wx.getStorageSync("urlArray");
-    if(!urlArray){
-      urlArray=[];
+    var urlArray = wx.getStorageSync("urlArray");
+    if (!urlArray) {
+      urlArray = [];
     }
     wx.request({
-      url:url,
-      data:{
-        showapi_appid:appid,
-        showapi_sign:sign,
+      url: url,
+      data: {
+        showapi_appid: appid,
+        showapi_sign: sign,
         title: title,
         rows: rows,
-        base64File:false
+        base64File: false
       },
-      success:function(res){
+      success: function (res) {
         //console.log(res);
         wx.hideLoading();
-        var urlObj={};
+        var urlObj = {};
         var excelUrl = res.data.showapi_res_body.url;
-        urlObj.name=cateGory;
-        urlObj.url=excelUrl;
+        urlObj.name = cateGory;
+        urlObj.url = excelUrl;
         urlArray.unshift(urlObj);
         wx.setStorageSync("urlArray", urlArray);
       }
     })
   },
-  onHisTap:function(){
+  onHisTap: function () {
     this.setData({
       isCheckExist: "nodisplay",
       isHisExist: "display"
     })
     var array = wx.getStorageSync("urlArray");
     this.setData({
-      his:array,
+      his: array,
     })
   },
   onOffTap: function () {
     this.setData({
       isCheckExist: "display",
       isHisExist: "nodisplay"
+    })
+  },
+  onHelpTap:function(){
+    var cnt = "https://www.kancloud.cn/mjjpipi/tingyun/395259";
+    wx.showModal({
+      title:"打开网页",
+      content:cnt,
+      complete:function(){
+        wx.setClipboardData({
+          data: cnt,
+        });
+        wx.showToast({
+          title: '已复制到剪切板',
+        })
+      }
     })
   },
   /**
@@ -318,35 +358,35 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-  
+
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-  
+
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-  
+
   },
 
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
-  
+
   },
 
   /**
    * 页面上拉触底事件的处理函数
    */
   onReachBottom: function () {
-  
+
   },
 
   /**

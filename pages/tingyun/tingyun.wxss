@@ -1,7 +1,6 @@
 @import "../../utils/style/normalize.wxss";
 @import "../../utils/style/theme.wxss";
 .check-container,.history-container{
-  height: 100%;
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
@@ -44,7 +43,7 @@ image{
 }
 button{
   width: 70%;
-  margin-top:100rpx;
+  margin-top:30rpx;
   background: #bfbfbf;
   color: white;
   height: 80rpx;
@@ -53,12 +52,15 @@ button{
 .blue{
   background: #1296db;
 }
-.history,.off{
+.history,.off,.help{
   position: absolute;
   top: -50rpx;
   right:50rpx;
   width: 50rpx;
   height: 50rpx;
+}
+.help{
+  top: 100rpx;
 }
 .off{
   left: 50rpx;
