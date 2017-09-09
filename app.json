@@ -1,7 +1,8 @@
 {
   "pages": [
-    "pages/index/index",
+    "pages/tingyun/tingyun_detail/tingyun_detail",
     "pages/tingyun/tingyun",
+    "pages/index/index",
     "pages/kuaidi/kuaidi",
     "pages/kuaidi/company/index",
     "pages/kuaidi/result/index"
@@ -12,6 +13,7 @@
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
+    "backgroundColor":"#cfe5ef",
     "selectedColor": "#1296db",
     "borderStyle": "white",
     "list": [
