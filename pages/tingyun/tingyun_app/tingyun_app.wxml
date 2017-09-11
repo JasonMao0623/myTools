@@ -51,7 +51,7 @@
   </view>
    <view class="history-container {{isHisExist}}">
     <view class="his-line">
-      <view>事务名称</view>
+      <view>名称</view>
       <view>EXCEL下载地址</view>
     </view>
     <block wx:for="{{his}}">

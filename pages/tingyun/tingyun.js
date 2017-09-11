@@ -37,7 +37,8 @@ Page({
   },
   onIntoTap: function (e) {
     var tag = e.currentTarget.dataset.tag;
-    var url = '/pages/tingyun/tingyun_detail/tingyun_detail?tag='+tag;
+    console.log(tag);
+    var url = '/pages/tingyun/tingyun_' + tag + '/tingyun_' + tag +'?tag='+tag;
     wx.navigateTo({
       url: url
     })

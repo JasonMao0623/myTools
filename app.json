@@ -1,7 +1,10 @@
 {
   "pages": [
-    "pages/tingyun/tingyun_detail/tingyun_detail",
     "pages/tingyun/tingyun",
+    "pages/tingyun/tingyun_server/tingyun_server",
+    "pages/tingyun/tingyun_app/tingyun_app",
+    "pages/tingyun/tingyun_network/tingyun_network",
+    "pages/tingyun/tingyun_browser/tingyun_browser",
     "pages/index/index",
     "pages/kuaidi/kuaidi",
     "pages/kuaidi/company/index",

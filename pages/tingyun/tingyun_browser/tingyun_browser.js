@@ -1,4 +1,5 @@
 // pages/tingyun/tingyun.js
+var app = getApp();
 var tyConfig = require("../../../utils/config/tingyun.js");
 var configData = tyConfig.tyConfig;
 var httpProperties = {};
@@ -17,27 +18,18 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    console.log(app);
     var tag = options.tag;
     var charts = this.switchFunction(tag);
-    charts = [
-      {
-        id: "application-webaction-topn",
-        name: '最耗时WEB应用过程'
-      },
-      {
-        id: "application-external-topn",
-        name: '最耗时外部应用操作'
-      },
-      {
-        id: "application-database-topn",
-        name: '最耗时SQL操作'
-      },
-    ];
     this.setData({
       charts: charts
     })
     httpProperties.chartId = "application-webaction-topn";
-    this.getTime();
+    var date = app.getTime()
+    this.setData({
+      time: date.time,
+      date: date.day
+    })
   },
   //switch函数
   switchFunction: function (tag) {
@@ -55,39 +47,6 @@ Page({
       case "browser":
         return chartObj.browser;
         break;
-    }
-  },
-  //获取本地时间
-  getTime: function () {
-    //获取本地时间
-    var date = new Date();
-    var seperator1 = "-";
-    var seperator2 = ":";
-    var year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    var strDate = date.getDate();
-    var hour = date.getHours();
-    var minutes = date.getMinutes();
-    var seconds = date.getSeconds();
-    month = this.processTime(month);
-    strDate = this.processTime(strDate);
-    hour = this.processTime(hour);
-    minutes = this.processTime(minutes);
-    seconds = this.processTime(seconds);
-    var day = year + seperator1 + month + seperator1 + strDate;
-    var time = hour + seperator2 + minutes + seperator2 + seconds;
-    //console.log(time);
-    this.setData({
-      time: time,
-      date: day
-    })
-  },
-  //时间处理事件,个位数前面加0
-  processTime: function (value) {
-    if (value >= 0 && value <= 9) {
-      return "0" + value;
-    } else {
-      return value;
     }
   },
   //日期选择绑定事件
@@ -209,7 +168,7 @@ Page({
         },
         method: 'POST',
         success: function (res) {
-          console.log(res);
+          //console.log(res);
           if (res.statusCode == 200) {
             //调用数据处理函数
             that.processData(res);
@@ -229,21 +188,20 @@ Page({
   },
   //数据处理函数
   processData: function (res) {
-    //console.log(res);
     var head = res.data.chart.dataset[0].head;
     var data = res.data.chart.dataset[0].data[0];
     var cateGory = head.categories[0].name;
     var serieses = head.serieses;
-    var affairArry = [];
     //获取事务名称函数
+    var affairArray = [];
     for (var i = 0; i < serieses.length; i++) {
       var seriese = serieses[i].name;
-      affairArry.push(seriese)
+      affairArray.push(seriese)
     };
     //调用计算平均值函数
     var avgTimeArray = [];
     var chartId = httpProperties.chartId;
-    console.log(data);
+    //console.log(data);
     if (data.length == 0) {
       wx.showModal({
         title: '注意',
@@ -265,13 +223,13 @@ Page({
           break;
       }
     }
-    //console.log(avgTimeArray);
-    this.processArray(cateGory, affairArry, avgTimeArray);
+    console.log(avgTimeArray);
+    this.processArray(cateGory, affairArray, avgTimeArray);
   },
   //计算平均值函数,并返回平均值数组
   avgSumProcess: function (data, num) {
     var avgTimeArray = [];
-    console.log(data);
+    //console.log(data);
     for (var i = 0; i < data.length; i++) {
       var dataItem = data[i];
       var timeSum = 0;
@@ -306,38 +264,19 @@ Page({
     };
     console.log("rows");
     console.log(rows);
-    this.excelHttp(title, rows, cateGory);
+    app.excelHttp(configData, title, rows, cateGory, this.callBack);
   },
-  //excel表格生成函数
-  excelHttp: function (title, rows, cateGory) {
-    var config = configData[0];
-    var url = config.url;
-    var appid = config.appid;
-    var sign = config.sign;
-    var urlArray = wx.getStorageSync("urlArray");
-    if (!urlArray) {
-      urlArray = [];
-    }
-    wx.request({
-      url: url,
-      data: {
-        showapi_appid: appid,
-        showapi_sign: sign,
-        title: title,
-        rows: rows,
-        base64File: false
-      },
-      success: function (res) {
-        //console.log(res);
-        wx.hideLoading();
-        var urlObj = {};
-        var excelUrl = res.data.showapi_res_body.url;
-        urlObj.name = cateGory;
-        urlObj.url = excelUrl;
-        urlArray.unshift(urlObj);
-        wx.setStorageSync("urlArray", urlArray);
-      }
-    })
+  //回调函数
+  //来源app.js
+  callBack: function (res, cateGory, urlArray) {
+    console.log(res);
+    wx.hideLoading();
+    var urlObj = {};
+    var excelUrl = res.data.showapi_res_body.url;
+    urlObj.name = cateGory;
+    urlObj.url = excelUrl;
+    urlArray.unshift(urlObj);
+    wx.setStorageSync("urlArray", urlArray);
   },
   //历史点击事件
   onHisTap: function () {
