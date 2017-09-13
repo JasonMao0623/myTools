@@ -47,7 +47,8 @@
         </picker>
       </view>
     </view>
-    <button catchtap="onButtonTap" class="{{className}}">立即生成</button>
+    <button catchtap="onCreateTap" class="{{className}}">立即生成</button>
+    <image src="/images/tingyun/add.png" class="add" catchtap="onButtonTap"></image>
   </view>
    <view class="history-container {{isHisExist}}">
     <view class="his-line">

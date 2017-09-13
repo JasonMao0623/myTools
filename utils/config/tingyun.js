@@ -82,12 +82,12 @@ chartObj.app = [
 ];
 chartObj.browser = [
   {
-    id: "mobile-application-performance",
-    name: '应用响应时间'
+    id: "browser-page-load-time",
+    name: '页面加载分解图'
   },
   {
-    id: "mobile-application-device",
-    name: '活跃设备数'
+    id: "browser-pv-total",
+    name: '访问量统计图'
   },
 ];
 module.exports = {

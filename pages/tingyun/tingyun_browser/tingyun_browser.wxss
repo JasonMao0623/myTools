@@ -104,3 +104,10 @@ button{
    padding-top: 35rpx;
    height: 65rpx;
 }
+.add{
+  position: absolute;
+  width: 65rpx;
+  height: 65rpx;
+  right: 45rpx;
+  bottom:270rpx;
+}

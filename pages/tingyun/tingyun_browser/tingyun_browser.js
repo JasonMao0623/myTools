@@ -3,6 +3,7 @@ var app = getApp();
 var tyConfig = require("../../../utils/config/tingyun.js");
 var configData = tyConfig.tyConfig;
 var httpProperties = {};
+var rowsArray = [];
 Page({
 
   /**
@@ -11,7 +12,8 @@ Page({
   data: {
     index: 0,
     isCheckExist: "display",
-    isHisExist: "nodisplay"
+    isHisExist: "nodisplay",
+    isFirst: true
   },
 
   /**
@@ -24,7 +26,7 @@ Page({
     this.setData({
       charts: charts
     })
-    httpProperties.chartId = "application-webaction-topn";
+    httpProperties.chartId = "browser-page-load-time";
     var date = app.getTime()
     this.setData({
       time: date.time,
@@ -130,8 +132,9 @@ Page({
   },
   //url处理函数
   processUrl: function () {
-    var url = 'https://api.tingyun.com/server/latest/accounts/';
-    url = url + httpProperties.accountId + "/application/" + httpProperties.appId + "/charts/" + httpProperties.chartId + ".json";
+    var url = 'https://api.tingyun.com/browser/latest/accounts/';
+    var url = url + httpProperties.accountId + "/browser/application/" + httpProperties.appId + "/charts/" + httpProperties.chartId + ".json";
+    //var url2 = url + httpProperties.accountId + "/browser/application/" + httpProperties.appId + "/charts/" + "browser-pv-total" + ".json";
     this.httpFunction(url);
   },
   //http请求函数
@@ -153,7 +156,7 @@ Page({
     if (str1 == str2) {
       wx.showModal({
         title: '提醒',
-        content: '该数据已生成，请到历史列表查看',
+        content: '该数据已添加',
       })
     } else {
       wx.request({
@@ -188,18 +191,27 @@ Page({
   },
   //数据处理函数
   processData: function (res) {
+    console.log(res);
     var head = res.data.chart.dataset[0].head;
     var data = res.data.chart.dataset[0].data[0];
     var cateGory = head.categories[0].name;
-    var serieses = head.serieses;
-    //获取事务名称函数
-    var affairArray = [];
-    for (var i = 0; i < serieses.length; i++) {
-      var seriese = serieses[i].name;
-      affairArray.push(seriese)
-    };
-    //调用计算平均值函数
-    var avgTimeArray = [];
+    var oldAppId = this.data.appId;
+    var row = [];
+    this.setData(
+      { isFirst: true }
+    )
+    if (httpProperties.appId == oldAppId) {
+      this.setData(
+        { isFirst: false }
+      )
+      row = this.data.row;
+      if (!row) {
+        row = [];
+      }
+    }
+    //data数据处理函数
+    var avgSumTimeArray = [];
+    var pv = {};
     var chartId = httpProperties.chartId;
     //console.log(data);
     if (data.length == 0) {
@@ -207,70 +219,119 @@ Page({
         title: '注意',
         content: '数据为空，时间段再选长点呗',
       })
+
     } else {
       wx.showLoading({
         title: '加载中',
       })
-      switch (chartId) {
-        case "application-webaction-topn":
-          avgTimeArray = this.avgSumProcess(data, 2);
-          break;
-        case "application-external-topn":
-          avgTimeArray = this.avgSumProcess(data, 1);
-          break;
-        case "application-database-topn":
-          avgTimeArray = this.avgSumProcess(data, 1);
-          break;
-      }
-    }
-    console.log(avgTimeArray);
-    this.processArray(cateGory, affairArray, avgTimeArray);
-  },
-  //计算平均值函数,并返回平均值数组
-  avgSumProcess: function (data, num) {
-    var avgTimeArray = [];
-    //console.log(data);
-    for (var i = 0; i < data.length; i++) {
-      var dataItem = data[i];
-      var timeSum = 0;
-      var avgTime = 0;
-      //console.log(dataItem);
-      for (var x = 0; x < dataItem.length; x++) {
-        var timeArray = dataItem[x];
-        //数组判空
-        if (!timeArray[num]) {
-          timeArray[num] = 0;
+      if (httpProperties.chartId == "browser-page-load-time") {
+        avgSumTimeArray = this.avgSumProcess(data, 0);
+        row[4] = avgSumTimeArray;
+        row[0] = cateGory;
+        this.setData({
+          row: row
+        })
+        var isFirst=this.data.isFirst;
+        if(!isFirst){
+          rowsArray.push(this.data.row);
+          this.setData({
+            rowsArray:rowsArray
+          })
         }
-        var time = timeArray[num];
-        timeSum = timeSum + time;
-        avgTime = timeSum / dataItem.length;
-        avgTime = avgTime.toFixed(3).toString() + "秒";
-        avgTimeArray.push(avgTime);
+      } else if (httpProperties.chartId == "browser-pv-total") {
+        pv = this.pvProcess(data);
+        console.log(pv);
+        row[1] = pv.pvTotal;
+        row[2] = pv.max;
+        row[3] = pv.min;
+        this.setData({
+          row: row
+        })
+        var isFirst = this.data.isFirst;
+        if (!isFirst) {
+          rowsArray.push(this.data.row);
+          this.setData({
+            rowsArray: rowsArray
+          });
+        }
       }
-      return avgTimeArray;
+      this.setData({
+        appId: httpProperties.appId
+      });
+      wx.hideLoading();
+      wx.showToast({
+        title: '添加成功',
+      })
+      console.log(rowsArray);
+    }
+    //this.processArray(cateGory,avgSumTimeArray,pv);
+  },
+  //pv处理函数
+  pvProcess: function (data) {
+    var truePvArray = data[0];
+    var pv = {};
+    var pvTotal = 0;
+    var pvArray = [];
+    //计算pv总量
+    for (var i in truePvArray) {
+      var truePv = truePvArray[i][0];
+      pvTotal = pvTotal + truePv;
+      pvArray.push(truePv);
+    }
+    //计算pv的最大值和最小值
+    var max = pvArray[0];
+    var min = pvArray[0];
+    for (var j in pvArray) {
+      if (max < pvArray[j]) {
+        max = pvArray[j]
+      }
+      if (min > pvArray[j]) {
+        min = pvArray[j]
+      }
     };
+    pv.pvTotal = pvTotal;
+    pv.max = max;
+    pv.min = min;
+    return pv;
+  },
+  //计算平均下载时间函数,并返回平均值数组
+  avgSumProcess: function (data, num) {
+    var dataItem = data[0];
+    var sumTimeArray = [];
+    var totalTime = 0;
+    for (var i = 0; i < dataItem.length; i++) {
+      var time = dataItem[i];
+      var sumTime = 0;
+      for (var j = 0; j < time.length; j++) {
+        sumTime = sumTime + time[j];
+      }
+      sumTimeArray.push(sumTime);
+    };
+    for (var a = 0; a < sumTimeArray.length; a++) {
+      totalTime = totalTime + sumTimeArray[a];
+    }
+    var avgTime = totalTime / sumTimeArray.length;
+    avgTime = avgTime.toFixed(3).toString() + "秒";
+    return avgTime;
   },
   //将处理的数据在处理
-  processArray: function (cateGory, name, data) {
-    var rows = [];
-    var title = ["来源", "对应网址/接口/错误", "类型", "响应时间/错误率"];
-    for (var index in name) {
-      var row = [];
-      row.push(cateGory);
-      row.push(name[index]);
-      row.push("响应慢");
-      row.push(data[index]);
-      rows.push(row);
-    };
-    console.log("rows");
-    console.log(rows);
-    app.excelHttp(configData, title, rows, cateGory, this.callBack);
+  processArray: function (cateGory, avgSumTimeArray, pv) {
+    // var row = [];
+    // var title = ["活动名称", "周总访问量", "周最大访问量", "周最小访问量","平均响应时间"];
+    // row[0]=cateGory;
+    // row[1] = pv.pvTotal?pv.pvToal:"";
+    // row[2]=pv.max?pv.max:"";
+    // row[3]=pv.min?pv.min:"";
+    // row[4]=avgSumTimeArray;
+    // rowsArray.push(row);
+    // console.log("rows");
+    // console.log(rows);
+    //app.excelHttp(configData, title, rows, cateGory, this.callBack);
   },
   //回调函数
   //来源app.js
   callBack: function (res, cateGory, urlArray) {
     console.log(res);
-    wx.hideLoading();
     var urlObj = {};
     var excelUrl = res.data.showapi_res_body.url;
     urlObj.name = cateGory;
@@ -311,6 +372,27 @@ Page({
         })
       }
     })
+  },
+  onCreateTap:function(){
+    var rows = this.data.rowsArray;
+    var rowsOld=wx.getStorageInfoSync("rowsOld")
+    var title = ["活动名称", "周总访问量", "周最大访问量", "周最小访问量", "平均响应时间"];
+    if(rows){
+      if(rows==rowsOld){
+        wx.showModal({
+          title: '提醒',
+          content: '数据已生成，青岛历史列表查看',
+        })
+      }else{
+        app.excelHttp(configData, title, rows, this.data.time, this.callBack);
+        wx.setStorageSync("rowsOld", rows)
+      }
+    }else{
+      wx.showModal({
+        title: '提醒',
+        content: '请先点击右侧+号，添加图表',
+      })
+    }
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

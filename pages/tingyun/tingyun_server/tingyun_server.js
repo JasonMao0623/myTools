@@ -21,6 +21,20 @@ Page({
     console.log(app);
     var tag = options.tag;
     var charts = this.switchFunction(tag);
+    charts = [
+      {
+        id: "application-webaction-topn",
+        name: '最耗时WEB应用过程'
+      },
+      {
+        id: "application-external-topn",
+        name: '最耗时外部应用操作'
+      },
+      {
+        id: "application-database-topn",
+        name: '最耗时SQL操作'
+      },
+    ];
     this.setData({
       charts: charts
     })
